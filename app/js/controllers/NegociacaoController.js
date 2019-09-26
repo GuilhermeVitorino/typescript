@@ -30,7 +30,7 @@ System.register(["../views/NegociacoesView", "../views/MensagemView", "../models
                 }
                 adiciona(event) {
                     event.preventDefault();
-                    const negociacao = new Negociacao_1.Negociacao(new Date(this._inputData.value.replace(/-/g, '/')), parseInt(this._inputQuantidade.value), parseFloat(this._inputValor.value));
+                    const negociacao = new Negociacao_1.Negociacao(new Date(this._inputData.val().replace(/-/g, ',')), parseInt(this._inputQuantidade.val()), parseFloat(this._inputValor.val()));
                     this._negociacoes.adiciona(negociacao);
                     this._negociacoes.paraArray().forEach(negociacao => {
                         console.log(negociacao.data);
