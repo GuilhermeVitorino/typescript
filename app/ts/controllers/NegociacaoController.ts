@@ -1,7 +1,11 @@
-import { NegociacoesView } from '../views/NegociacoesView';
+/*import { NegociacoesView } from '../views/NegociacoesView';
 import { MensagemView } from '../views/MensagemView';
 import { Negociacoes } from '../models/Negociacoes';
-import { Negociacao } from '../models/Negociacao';
+import { Negociacao } from '../models/Negociacao';*/
+
+//barrel strategy
+import { NegociacoesView, MensagemView } from '../views/index';
+import { Negociacoes, Negociacao } from '../models/index';
 
 export class NegociacaoController {
     private _inputData: JQuery; 
