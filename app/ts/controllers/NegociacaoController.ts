@@ -24,7 +24,7 @@ export class NegociacaoController {
         this._negociacoesView.update(this._negociacoes);
     }
 
-    @logarTempoDeExecucao()
+    @logarTempoDeExecucao(true)
     adiciona(event: Event): void {
 
         event.preventDefault();
