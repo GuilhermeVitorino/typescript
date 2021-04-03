@@ -1,26 +1,24 @@
-/*import { NegociacoesView } from '../views/NegociacoesView';
-import { MensagemView } from '../views/MensagemView';
-import { Negociacoes } from '../models/Negociacoes';
-import { Negociacao } from '../models/Negociacao';*/
-
 //barrel strategy
 import { NegociacoesView, MensagemView } from '../views/index';
 import { Negociacoes, Negociacao } from '../models/index';
-import { logarTempoDeExecucao } from '../helpers/decorators/index';
+import { DomInject, logarTempoDeExecucao } from '../helpers/decorators/index';
 
 export class NegociacaoController {
-    private _inputData: JQuery; 
+
+    @DomInject('#data')
+    private _inputData: JQuery;
+    
+    @DomInject('#quantidade')
     private _inputQuantidade: JQuery;
+
+    @DomInject('#valor')
     private _inputValor: JQuery;
-    //private _negociacoes: Negociacoes = new Negociacoes();
+
     private _negociacoes = new Negociacoes();
     private _negociacoesView = new NegociacoesView('#negociacoesView');
     private _mensagemView = new MensagemView('#mensagemView');
 
     constructor() {
-        this._inputData = $('#data');
-        this._inputQuantidade = $('#quantidade');
-        this._inputValor = $('#valor');
         this._negociacoesView.update(this._negociacoes);
     }
 
