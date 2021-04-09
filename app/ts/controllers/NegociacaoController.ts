@@ -1,6 +1,6 @@
 //barrel strategy
 import { NegociacoesView, MensagemView } from '../views/index';
-import { Negociacoes, Negociacao } from '../models/index';
+import { Negociacoes, Negociacao, NegociacaoParcial } from '../models/index';
 import { DomInject, logarTempoDeExecucao } from '../helpers/decorators/index';
 
 export class NegociacaoController {
@@ -25,47 +25,70 @@ export class NegociacaoController {
     @logarTempoDeExecucao(true)
     adiciona(event: Event): void {
 
-        event.preventDefault();
+    event.preventDefault();
 
-        let data = new Date(this._inputData.val().replace(/-/g, ','));
+    let data = new Date(this._inputData.val().replace(/-/g, ','));
 
-        if(!this._ehDiaUtil(data)) {
+    if (!this._ehDiaUtil(data)) {
 
-            this._mensagemView.update('Somente negociações em dias úteis, por favor!');
-            return 
-        }
+      this._mensagemView.update('Somente negociações em dias úteis, por favor!');
+      return
+    }
 
-        const negociacao = new Negociacao(
-            data,
-            parseInt(this._inputQuantidade.val()),
-            parseFloat(this._inputValor.val())
-        );
+    const negociacao = new Negociacao(
+      data,
+      parseInt(this._inputQuantidade.val()),
+      parseFloat(this._inputValor.val())
+    );
 
-        this._negociacoes.adiciona(negociacao);
+    this._negociacoes.adiciona(negociacao);
 
-        this._negociacoes.paraArray().forEach(negociacao => {
-            console.log(negociacao.data);
-            console.log(negociacao.quantidade);
-            console.log(negociacao.valor);
-        });
+    this._negociacoes.paraArray().forEach(negociacao => {
+      console.log(negociacao.data);
+      console.log(negociacao.quantidade);
+      console.log(negociacao.valor);
+    });
 
+    this._negociacoesView.update(this._negociacoes);
+    this._mensagemView.update('Negociação adicionada com sucesso');
+  }
+
+  private _ehDiaUtil(data: Date) {
+
+    return data.getDay() != DiaDaSemana.Sabado && data.getDay() != DiaDaSemana.Domingo;
+  }
+
+  importaDados() {
+
+    function isOk(res: Response) {
+
+      if (res.ok) {
+        return res;
+      } else {
+        throw new Error(res.statusText);
+      }
+    }
+
+    fetch('http://localhost:8080/dados')
+      .then(res => isOk(res))
+      .then(res => res.json())
+      .then((dados: NegociacaoParcial[]) => {
+        dados.map(dado => new Negociacao(new Date(), dado.vezes, dado.montante))
+        .forEach(negociacao => this._negociacoes.adiciona(negociacao))
         this._negociacoesView.update(this._negociacoes);
-        this._mensagemView.update('Negociação adicionada com sucesso');
-    }
+      })
+      .catch(err => console.log(err))
 
-    private _ehDiaUtil(data: Date) {
-
-        return data.getDay() != DiaDaSemana.Sabado && data.getDay() != DiaDaSemana.Domingo;
-    }
+  }
 }
 
 enum DiaDaSemana {
 
-    Domingo, 
-    Segunda, 
-    Terca, 
-    Quarta, 
-    Quinta, 
-    Sexta, 
-    Sabado
+  Domingo,
+  Segunda,
+  Terca,
+  Quarta,
+  Quinta,
+  Sexta,
+  Sabado
 }
