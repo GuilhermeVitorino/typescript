@@ -2,29 +2,32 @@
 import { NegociacoesView, MensagemView } from '../views/index';
 import { Negociacoes, Negociacao, NegociacaoParcial } from '../models/index';
 import { DomInject, logarTempoDeExecucao, Throttle } from '../helpers/decorators/index';
+import { NegociacaoService } from '../services/index';
 
 export class NegociacaoController {
 
-    @DomInject('#data')
-    private _inputData: JQuery;
-    
-    @DomInject('#quantidade')
-    private _inputQuantidade: JQuery;
+  @DomInject('#data')
+  private _inputData: JQuery;
 
-    @DomInject('#valor')
-    private _inputValor: JQuery;
+  @DomInject('#quantidade')
+  private _inputQuantidade: JQuery;
 
-    private _negociacoes = new Negociacoes();
-    private _negociacoesView = new NegociacoesView('#negociacoesView');
-    private _mensagemView = new MensagemView('#mensagemView');
+  @DomInject('#valor')
+  private _inputValor: JQuery;
 
-    constructor() {
-        this._negociacoesView.update(this._negociacoes);
-    }
+  private _negociacoes = new Negociacoes();
+  private _negociacoesView = new NegociacoesView('#negociacoesView');
+  private _mensagemView = new MensagemView('#mensagemView');
 
-    
-    @Throttle()
-    adiciona(): void {
+  private _negociacaoService = new NegociacaoService();
+
+  constructor() {
+    this._negociacoesView.update(this._negociacoes);
+  }
+
+
+  @Throttle()
+  adiciona(): void {
 
     let data = new Date(this._inputData.val().replace(/-/g, ','));
 
@@ -69,17 +72,15 @@ export class NegociacaoController {
       }
     }
 
-    fetch('http://localhost:8080/dados')
-      .then(res => isOk(res))
-      .then(res => res.json())
-      .then((dados: NegociacaoParcial[]) => {
-        dados.map(dado => new Negociacao(new Date(), dado.vezes, dado.montante))
-        .forEach(negociacao => this._negociacoes.adiciona(negociacao))
+    this._negociacaoService
+      .obterNegociacoes(isOk)
+      .then(negociacoes => {
+        negociacoes.forEach(negociacao => this._negociacoes.adiciona(negociacao));
         this._negociacoesView.update(this._negociacoes);
-      })
-      .catch(err => console.log(err))
 
+      });
   }
+
 }
 
 enum DiaDaSemana {
