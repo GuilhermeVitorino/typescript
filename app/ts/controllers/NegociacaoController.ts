@@ -1,7 +1,7 @@
 //barrel strategy
 import { NegociacoesView, MensagemView } from '../views/index';
 import { Negociacoes, Negociacao, NegociacaoParcial } from '../models/index';
-import { DomInject, logarTempoDeExecucao } from '../helpers/decorators/index';
+import { DomInject, logarTempoDeExecucao, Throttle } from '../helpers/decorators/index';
 
 export class NegociacaoController {
 
@@ -22,10 +22,9 @@ export class NegociacaoController {
         this._negociacoesView.update(this._negociacoes);
     }
 
-    @logarTempoDeExecucao(true)
-    adiciona(event: Event): void {
-
-    event.preventDefault();
+    
+    @Throttle()
+    adiciona(): void {
 
     let data = new Date(this._inputData.val().replace(/-/g, ','));
 
@@ -58,6 +57,7 @@ export class NegociacaoController {
     return data.getDay() != DiaDaSemana.Sabado && data.getDay() != DiaDaSemana.Domingo;
   }
 
+  @Throttle()
   importaDados() {
 
     function isOk(res: Response) {
