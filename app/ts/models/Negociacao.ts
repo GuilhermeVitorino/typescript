@@ -1,6 +1,6 @@
 import { Imprimivel } from "./Imprimivel";
 
-export class Negociacao extends Imprimivel {
+export class Negociacao implements Imprimivel {
 
     /*private _data: Date;
     private _quantidade: number;
